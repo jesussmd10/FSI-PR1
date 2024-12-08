@@ -546,6 +546,52 @@ class FIFOQueue(Queue):
 
 
 
+class BranchAndBound(Queue):
+
+    def __init__(self):
+        self.A = []  # Lista abierta
+
+    def append(self, item):
+        self.A.append(item) #Agregamos nodo
+        self.A = sorted(self.A, key=lambda i: i.path_cost, reverse=True) #Ordenamos por coste descendente
+
+    def __len__(self):
+        # Número de nodos que quedan por procesar
+        return len(self.A)
+
+    def extend(self, items):
+        self.A.extend(items) #Expandimos nodos
+        # Ordena la lista por el coste en orden descendente
+        self.A = sorted(self.A, key=lambda i: i.path_cost, reverse=True)
+
+    def pop(self):
+        # Quitar elementos de la lista abierta, nodo con menor coste
+        return self.A.pop()
+
+
+class Branch_and_boundWS(Queue):
+    """A Branch_and_bound Queue."""
+
+    def __init__(self, problem):
+        self.A = [] #Lista abierta
+        self.problem = problem  # Problema especifico a resolver
+
+    def append(self, item):
+        self.A.append(item) #Agregamos nodo
+        # Ordenación de lista abierta en base al coste acumulado y la heuristica en orden descendente
+        self.A = sorted(self.A, key=lambda x: (x.path_cost + self.problem.h(x)), reverse=True)
+
+    def __len__(self):
+        return len(self.A)
+
+    def extend(self, items):
+        self.A.extend(items) #Expandimos nodos
+        # Ordenación de lista abierta en base al coste acumulado y la heuristica en orden descendente
+        self.A = sorted(self.A, key=lambda x: (x.path_cost + self.problem.h(x)), reverse=True)
+
+    def pop(self):
+        return self.A.pop()  #Quitamos el último elemento de la lista y lo devuelve
+
 ## Fig: The idea is we can define things like Fig[3,10] later.
 ## Alas, it is Fig[3,10] not Fig[3.10], because that would be the same as Fig[3.1]
 Fig = {}

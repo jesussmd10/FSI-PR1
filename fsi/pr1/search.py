@@ -96,15 +96,49 @@ def graph_search(problem, fringe):
     """Search through the successors of a problem to find a goal.
     The argument fringe should be an empty queue.
     If two paths reach a state, only use the best one. [Fig. 3.18]"""
+
+    # Diccionario para almacenar los estados ya visitados
     closed = {}
+
+    # Contadores para los nodos generados y visitados
+    nodes_generated = 1  # Inicializamos el contador de nodos generados
+    nodes_visited = 0  # Inicializamos el contador de nodos visitados
+
+    # Añadimos el nodo inicial a la fringe
     fringe.append(Node(problem.initial))
+
+    # Mientras haya nodos en la fringe, seguimos buscando
     while fringe:
+
+        # Extraemos el siguiente nodo de la fringe (en este caso, usando pop())
         node = fringe.pop()
+
+        # Incrementamos el contador de nodos visitados cada vez que extraemos un nodo
+        nodes_visited += 1
+
+        # Verificamos si el nodo actual es el objetivo
         if problem.goal_test(node.state):
-            return node
+            # Si encontramos el objetivo, mostramos la cantidad de nodos generados y visitados
+            print(f"Nodos generados: {nodes_generated}, Nodos visitados: {nodes_visited}" "\nCoste Total: " + str(node.path_cost))
+            return node  # Devolvemos el nodo que contiene la solución
+
+        # Si el estado del nodo no ha sido visitado antes
         if node.state not in closed:
+            # Marcamos el estado como visitado
             closed[node.state] = True
-            fringe.extend(node.expand(problem))
+
+            # Expandimos el nodo, obteniendo sus nodos hijos
+            children = node.expand(problem)
+
+            # Incrementamos el contador de nodos generados por la cantidad de nodos hijos
+            nodes_generated += len(children)
+
+            # Añadimos los nodos hijos a la fringe para seguir explorándolos
+            fringe.extend(children)
+
+
+
+    # Si no encontramos el objetivo, devolvemos None
     return None
 
 
@@ -118,70 +152,13 @@ def depth_first_graph_search(problem):
     return graph_search(problem, Stack())
 
 
-def branch_and_bound(problem):
-    """Búsqueda utilizando Ramificación y Acotación"""
 
-    # Lista que servirá como la cola de nodos a explorar
-    fringe = [Node(problem.initial)]
-    visited = set()  # Para evitar ciclos
-    nodes_generated = 0  # Contador de nodos generados
-    nodes_visited = 0  # Contador de nodos visitados
+def branch_and_bound_search(problem):
+    return graph_search(problem, BranchAndBound())
 
-    while fringe:
-        # Ordenamos la fringe por el costo acumulado (path_cost)
-        fringe.sort(key=lambda node: node.path_cost)
-
-        # Extraemos el nodo con el menor path_cost
-        node = fringe.pop(0)
-        nodes_visited += 1  # Incrementamos el contador de nodos visitados
-
-        # Verificamos si el nodo es la solución
-        if problem.goal_test(node.state):
-            print(f"Nodos generados: {nodes_generated}, Nodos visitados: {nodes_visited}")
-            return node
-
-        # Expandimos el nodo solo si no ha sido visitado
-        if node.state not in visited:
-            visited.add(node.state)
-            children = node.expand(problem)
-            nodes_generated += len(children)
-            fringe.extend(children)
-
-    print(f"Nodos generados: {nodes_generated}, Nodos visitados: {nodes_visited}")
-    return None  # Si no se encuentra solución
-
-
-def branch_and_bound_with_heuristic(problem):
-    """Búsqueda de Ramificación y Acotación con Heurística"""
-
-    # Lista que servirá como la cola de nodos a explorar
-    fringe = [Node(problem.initial)]
-    visited = set()  # Para evitar ciclos
-    nodes_generated = 0  # Contador de nodos generados
-    nodes_visited = 0  # Contador de nodos visitados
-
-    while fringe:
-        # Ordenamos la fringe por el costo total estimado: path_cost + heurística
-        fringe.sort(key=lambda node: node.path_cost + problem.h(node))
-
-        # Extraemos el nodo con el menor valor de path_cost + heurística
-        node = fringe.pop(0)
-        nodes_visited += 1  # Incrementamos el contador de nodos visitados
-
-        # Verificamos si el nodo es la solución
-        if problem.goal_test(node.state):
-            print(f"Nodos generados: {nodes_generated}, Nodos visitados: {nodes_visited}")
-            return node
-
-        # Expandimos el nodo solo si no ha sido visitado
-        if node.state not in visited:
-            visited.add(node.state)
-            children = node.expand(problem)
-            nodes_generated += len(children)
-            fringe.extend(children)
-
-    print(f"Nodos generados: {nodes_generated}, Nodos visitados: {nodes_visited}")
-    return None  # Si no se encuentra solución
+def branch_and_boundWS_search(problem):
+    """Search the deepest nodes in the search tree first. [p 74]"""
+    return graph_search(problem, Branch_and_boundWS(problem))
 
 
 
