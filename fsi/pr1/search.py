@@ -97,12 +97,12 @@ def graph_search(problem, fringe):
     The argument fringe should be an empty queue.
     If two paths reach a state, only use the best one. [Fig. 3.18]"""
 
-    # Diccionario para almacenar los estados ya visitados
+    # Diccionario para almacenar los nodos ya visitados
     closed = {}
 
     # Contadores para los nodos generados y visitados
-    nodes_generated = 1  # Inicializamos el contador de nodos generados
-    nodes_visited = 0  # Inicializamos el contador de nodos visitados
+    nodes_generated = 1
+    nodes_visited = 0
 
     # Añadimos el nodo inicial a la fringe
     fringe.append(Node(problem.initial))
@@ -118,11 +118,11 @@ def graph_search(problem, fringe):
 
         # Verificamos si el nodo actual es el objetivo
         if problem.goal_test(node.state):
-            # Si encontramos el objetivo, mostramos la cantidad de nodos generados y visitados
+            # Si encontramos el objetivo, mostramos la cantidad de nodos generados, visitados y su coste
             print(f"Nodos generados: {nodes_generated}, Nodos visitados: {nodes_visited}" "\nCoste Total: " + str(node.path_cost))
-            return node  # Devolvemos el nodo que contiene la solución
+            return node  # Devolvemos el nodo solucion
 
-        # Si el estado del nodo no ha sido visitado antes
+        # Si el nodo no ha sido visitado antes
         if node.state not in closed:
             # Marcamos el estado como visitado
             closed[node.state] = True
